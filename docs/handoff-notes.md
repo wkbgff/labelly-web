@@ -57,7 +57,34 @@ TASK 2·3·4 자율 실행 세션(2026-08-20)에서 내린 판단, 건너뛴 항
   카테고리 정합성 점검 권장.
 - 신라면 저염식단 점수 **0.0**은 실제 값(초고나트륨 → 0 하한). 데모에 그대로 노출.
 
+## TASK 3 — 통계 자동 갱신 (GitHub Actions)
+브랜치: `feat/task3-stats-automation`
+
+- **`.github/workflows/update-stats.yml`**: `schedule: cron '0 15 * * *'`(UTC 15:00 = KST 익일 00:00)
+  + `workflow_dispatch`. 통계가 바뀐 경우에만 커밋 + 재배포.
+- **`scripts/update-stats.mjs`**: Supabase REST(PostgREST)로 COUNT만 조회(HEAD + `Prefer: count=exact`).
+  - 상품 수 = `products?visible_to_users=is.true`, 페르소나 수 = `personas?is_filter_type=is.false`
+    (안 걸면 비건 포함 8로 잘못 표기). 알레르기 21종은 조회 안 하고 하드코딩 유지.
+  - `public/stats.json`에 `{ productCount, personaCount, updatedAt }` 기록, **개수가 바뀐 경우에만** 커밋.
+- **재배포(3-4)**: GITHUB_TOKEN 커밋은 다른 워크플로를 트리거하지 않으므로, 통계가 바뀌면 같은
+  워크플로의 `deploy` 잡에서 빌드 + Pages 배포. deploy 워크플로(TASK 4)와 `concurrency: group=pages`
+  공유로 직렬화. **Pages 활성화 자체는 TASK 4에서** 하므로, 그 전에 이 워크플로가 수동 실행되면
+  배포 단계는 실패할 수 있음(크론 주기상 실제 문제 가능성 없음).
+- **프론트(3-6)**: `src/lib/useSiteStats.ts`가 런타임에 `/stats.json` fetch → 실패/부재 시
+  `site-config.ts`의 `defaultStats` 폴백(숫자 안 비어 보임). 홈 신뢰 바 카운트업 유지, 소개 페이지는
+  값만 표시. 표시 규칙 `floor(n/100)*100` + 콤마 + `"+"` 유지. 초기 `stats.json`은 실제 현재 값
+  (productCount **5849** visible, personaCount **7**).
+- **버그 수정(원칙 D: 버그 수정 OK)**: 최초 구현에서 신뢰 바 카운트업이 `stats.json`이 카운트업
+  도중 도착하면 **프리즈**하는 문제를 발견·수정 — 카운트업을 "가시성 플래그 + 현재값→목표값 재타겟"
+  구조로 바꿔, fetch가 언제 끝나도 목표값으로 매끄럽게 이어지게 함. (헤드리스 브라우저로 확인)
+
 ## 성태님이 직접 확인/처리해야 할 것 (누적)
+- **(TASK 3) GitHub 저장소 Settings → Secrets and variables → Actions 에 시크릿 2개 등록**
+  (값은 성태님이 직접 — 저는 이름만 참조):
+  - `SUPABASE_URL` (예: `https://sthzmueifkgfxcixylry.supabase.co`)
+  - `SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_...` — publishable key, 권한 최소화)
+  - 등록 전에는 통계 자동 갱신이 **스킵**되고(워크플로 안내 후 정상 종료), 사이트는 기본값
+    (5,800+ / 21종 / 7가지)으로 정상 동작.
 - (TASK 2) 위 "데이터 주의": 유탕면 카테고리에 한과 오분류 — 확인 권장.
 - (TASK 2 판단) 데모 SKU 대체(신라면→큰사발, 새우깡→깐풍새우깡)와 대체상품(진라면→농심 사리면)
   교체가 마케팅상 괜찮은지 확인.

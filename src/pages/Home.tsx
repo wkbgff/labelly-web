@@ -7,7 +7,8 @@ import { useMediaQuery } from '../lib/useMediaQuery';
 import { useDocumentMeta } from '../lib/useDocumentMeta';
 import { useReveal } from '../lib/useReveal';
 import { prefersReducedMotion } from '../lib/prefersReducedMotion';
-import { DEMO, stats, storeUrls } from '../site-config';
+import { useSiteStats } from '../lib/useSiteStats';
+import { DEMO, storeUrls } from '../site-config';
 
 // 섹션 스타일 prop (원본 principlesDark, 기본 true → 원칙 섹션 다크 변형)
 const PRINCIPLES_DARK = true;
@@ -52,6 +53,7 @@ export default function Home() {
   );
   const isMobile = useMediaQuery('(max-width: 980px)');
   const location = useLocation();
+  const siteStats = useSiteStats();
   const rootRef = useRef<HTMLDivElement>(null);
   const demoElRef = useRef<HTMLDivElement>(null);
 
@@ -59,6 +61,7 @@ export default function Home() {
   const [heroScore, setHeroScore] = useState(0);
   const [trust, setTrust] = useState([0, 0, 0]);
   const [trustDone, setTrustDone] = useState(false);
+  const [trustVisible, setTrustVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [dispScores, setDispScores] = useState<number[]>(DEMO[0].scores.slice());
   const [openFaq, setOpenFaq] = useState(-1);
@@ -66,6 +69,8 @@ export default function Home() {
   const stepRef = useRef(0);
   const dispRef = useRef<number[]>(DEMO[0].scores.slice());
   const rollRaf = useRef<number | null>(null);
+  const trustRef = useRef(trust);
+  trustRef.current = trust;
 
   // 스크롤 스태거([data-reveal]) — 소개 페이지와 공용
   useReveal(rootRef);
@@ -132,45 +137,55 @@ export default function Home() {
     };
   }, []);
 
-  // 신뢰 바 카운트업 (뷰포트 진입 시 1회)
+  // 신뢰 바가 처음 뷰포트에 들어오면 표시 플래그를 켠다(1회).
   useEffect(() => {
     const el = rootRef.current?.querySelector('[data-screen-label="신뢰 바"]');
     if (!el) return;
-    const target = [stats.displayProductCount || 0, stats.allergenCount || 0, stats.personaCount || 0];
-    const reduced = prefersReducedMotion();
-    let raf: number | null = null;
-    let done = false;
     const io = new IntersectionObserver(
       (ents) => {
-        if (!ents.some((e) => e.isIntersecting) || done) return;
-        io.disconnect();
-        done = true;
-        if (reduced) {
-          setTrust(target);
-          setTrustDone(true);
-          return;
+        if (ents.some((e) => e.isIntersecting)) {
+          setTrustVisible(true);
+          io.disconnect();
         }
-        const t0 = performance.now();
-        const tick = (now: number) => {
-          const k = Math.min(1, (now - t0) / 1200);
-          const e = 1 - Math.pow(1 - k, 3);
-          setTrust(target.map((v) => Math.round(v * e)));
-          if (k < 1) raf = requestAnimationFrame(tick);
-          else {
-            setTrust(target);
-            setTrustDone(true);
-          }
-        };
-        raf = requestAnimationFrame(tick);
       },
       { threshold: 0.4 },
     );
     io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // 표시된 뒤(그리고 stats.json 이 늦게 도착/변경될 때마다) 현재 값에서 목표값으로 카운트업.
+  // 현재 표시값(trustRef)에서 이어가므로 fetch가 카운트업 전/중/후 언제 끝나도 프리즈가 없다.
+  useEffect(() => {
+    if (!trustVisible) return;
+    const target = [
+      siteStats.displayProductCount || 0,
+      siteStats.allergenCount || 0,
+      siteStats.personaCount || 0,
+    ];
+    if (prefersReducedMotion()) {
+      setTrust(target);
+      setTrustDone(true);
+      return;
+    }
+    const from = trustRef.current.slice();
+    let raf: number | null = null;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const k = Math.min(1, (now - t0) / 1200);
+      const e = 1 - Math.pow(1 - k, 3);
+      setTrust(from.map((f, i) => Math.round(f + (target[i] - f) * e)));
+      if (k < 1) raf = requestAnimationFrame(tick);
+      else {
+        setTrust(target);
+        setTrustDone(true);
+      }
+    };
+    raf = requestAnimationFrame(tick);
     return () => {
-      io.disconnect();
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [trustVisible, siteStats.displayProductCount, siteStats.allergenCount, siteStats.personaCount]);
 
   const rollTo = useCallback((idx: number) => {
     if (idx === stepRef.current) return;

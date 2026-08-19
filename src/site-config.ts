@@ -13,22 +13,21 @@ export interface SiteStats {
   productCountLabel: string;
 }
 
-// TODO: 24시간마다 갱신되는 실제 DB 카운트로 교체
-const productCount = 5851;
-const allergenCount = 21;
-const personaCount = 7;
+// 상품 수 표기 규칙: 100단위 내림 → 천단위 콤마 + "+"
+// 법정 알레르기 21종은 고정값(조회 대상 아님) — 기본 인자로 하드코딩 유지.
+export function computeStats(productCount: number, personaCount: number, allergenCount = 21): SiteStats {
+  const displayProductCount = Math.floor(productCount / 100) * 100;
+  const productCountLabel = displayProductCount.toLocaleString('ko-KR') + '+';
+  return { productCount, allergenCount, personaCount, displayProductCount, productCountLabel };
+}
 
-// 상품 수 표기 규칙: 100단위 내림 + 천단위 콤마 + "+"
-const displayProductCount = Math.floor(productCount / 100) * 100;
-const productCountLabel = displayProductCount.toLocaleString('ko-KR') + '+';
+// stats.json(GitHub Actions `update-stats`가 하루 1회 실제 DB 카운트로 갱신) fetch 실패/부재 시
+// 쓰는 폴백 기본값. 상품 수는 visible_to_users 기준(5,849 → 표기 5,800+), 페르소나는
+// is_filter_type=false 7종. 런타임 실제 값은 useSiteStats() 훅이 stats.json에서 읽어 옵니다.
+export const defaultStats: SiteStats = computeStats(5849, 7);
 
-export const stats: SiteStats = {
-  productCount,
-  allergenCount,
-  personaCount,
-  displayProductCount,
-  productCountLabel,
-};
+// 하위호환 별칭(정적 참조가 필요한 경우) — 기본값과 동일.
+export const stats: SiteStats = defaultStats;
 
 // TODO: 스토어 등록 후 실제 URL로 교체 (이 두 값만 채우면 전 페이지 반영)
 export const storeUrls = {

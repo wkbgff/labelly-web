@@ -6,7 +6,8 @@ import { Hover } from '../lib/Hover';
 import { useMediaQuery } from '../lib/useMediaQuery';
 import { useDocumentMeta } from '../lib/useDocumentMeta';
 import { useReveal } from '../lib/useReveal';
-import { stats, storeUrls } from '../site-config';
+import { useSiteStats } from '../lib/useSiteStats';
+import { storeUrls } from '../site-config';
 
 // 페르소나는 앱에서 고르는 나의 건강 관심사 (소개 페이지)
 const PERSONAS = [
@@ -38,6 +39,7 @@ export default function About() {
   const isMobile = useMediaQuery('(max-width: 880px)');
   const rootRef = useRef<HTMLDivElement>(null);
   useReveal(rootRef);
+  const stats = useSiteStats();
 
   return (
     <div ref={rootRef} style={{ minHeight: '100vh', background: '#FFFFFF', color: '#111417' }}>

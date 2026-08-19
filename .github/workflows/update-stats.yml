@@ -1,0 +1,72 @@
+name: Update stats
+
+# 통계(상품 수·페르소나 수)를 하루 1회 실제 DB에서 조회해 public/stats.json 갱신.
+# 값이 바뀐 경우에만 커밋하고, 사이트를 재배포합니다.
+on:
+  schedule:
+    - cron: '0 15 * * *' # UTC 15:00 = KST 익일 00:00
+  workflow_dispatch:
+
+# GitHub Pages 배포는 deploy 워크플로와 동시성 그룹을 공유해 직렬화합니다.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: write # stats.json 커밋/푸시
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.stats.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # 시크릿(SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY)이 없으면 스크립트가 안내 후 exit 0.
+      - name: Refresh stats.json from Supabase (counts only)
+        id: stats
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: node scripts/update-stats.mjs
+
+      - name: Commit stats.json (only when counts changed)
+        if: steps.stats.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stats.json
+          git commit -m "chore(stats): update stats.json [skip ci]"
+          git push
+
+  # GITHUB_TOKEN 커밋은 다른 워크플로를 트리거하지 않으므로, 통계가 바뀌면 여기서 직접 재배포.
+  deploy:
+    needs: update
+    if: needs.update.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main # update 잡이 방금 푸시한 최신 stats.json을 포함
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
