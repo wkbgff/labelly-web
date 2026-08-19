@@ -78,7 +78,29 @@ TASK 2·3·4 자율 실행 세션(2026-08-20)에서 내린 판단, 건너뛴 항
   도중 도착하면 **프리즈**하는 문제를 발견·수정 — 카운트업을 "가시성 플래그 + 현재값→목표값 재타겟"
   구조로 바꿔, fetch가 언제 끝나도 목표값으로 매끄럽게 이어지게 함. (헤드리스 브라우저로 확인)
 
+## TASK 4 — 배포 + SEO
+브랜치: `feat/task4-deploy-seo`
+
+- **4-1 배포**: `.github/workflows/deploy.yml`(`push: main` + `workflow_dispatch`) → build → GitHub Pages 배포.
+  Pages는 `gh api`로 활성화 완료(`build_type=workflow`).
+- **4-2 커스텀 도메인**: `public/CNAME = labelly-app.com`, Vite `base: '/'`. 도메인 소유권(TXT)은 완료 상태.
+  - ⚠️ **DNS A 레코드 미설정**이라 배포돼도 `labelly-app.com` 접속은 아직 안 됨(정상, 오류 아님).
+    CNAME 설정 시 기본 URL(`wkbgff.github.io/labelly-web`)은 커스텀 도메인으로 리다이렉트되므로 DNS 전엔
+    어느 URL로도 라이브 확인이 안 됨 → 로컬 정적서버(Pages 동작 모사)로 대체 검증함.
+- **4-3 SPA 폴백**: `vite.config.ts`가 빌드 후 `dist/index.html → dist/404.html` 복사. Pages가 알 수 없는
+  경로에 404.html을 주면 같은 SPA가 부팅돼 React Router가 렌더. Pages 동작(404→404.html, 상태 404)을
+  모사한 정적 서버로 **`/delete-account`·`/about`·`/support` 직접 접근이 모두 정상 렌더**됨을 확인
+  (알 수 없는 경로는 홈으로). ⚠️ 딥링크 HTTP 상태는 **404**(페이지는 정상 렌더) — 사람/심사자에겐
+  무관하나 SEO 인덱싱엔 불리. **TASK 5 프리렌더로 200 전환 가능**(선택).
+- **4-4 SEO**: 페이지별 title/description(`useDocumentMeta`, TASK 1)에 더해 `index.html`에 OG/Twitter 태그
+  + `theme-color` 추가. `public/robots.txt`, `public/sitemap.xml`(4개 경로) 추가. 홈 title은 요구대로
+  검색어 기준("라벨리 — 한국 식품 바코드 스캔, 목표별 건강점수"), description에 바코드 스캔·식품 성분·
+  알레르기·건강점수 키워드 포함. OG 이미지는 **자리표시자**(`https://labelly-app.com/og-image.png`).
+
 ## 성태님이 직접 확인/처리해야 할 것 (누적)
+- **(TASK 4) DNS A 레코드 설정**(성태님 직접) — 설정돼야 `labelly-app.com`으로 접속 가능. 그 전까지는
+  배포는 되지만 커스텀 도메인 접속 불가(정상).
+- **(TASK 4) OG 이미지 `public/og-image.png`(1200x630) 추가** — 현재 링크만 있고 이미지 없음(자리표시자).
 - **(TASK 3) GitHub 저장소 Settings → Secrets and variables → Actions 에 시크릿 2개 등록**
   (값은 성태님이 직접 — 저는 이름만 참조):
   - `SUPABASE_URL` (예: `https://sthzmueifkgfxcixylry.supabase.co`)

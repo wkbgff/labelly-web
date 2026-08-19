@@ -1,0 +1,42 @@
+name: Deploy to GitHub Pages
+
+# main 에 push될 때(코드 병합) 빌드 후 GitHub Pages로 배포.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 통계 갱신 워크플로(update-stats)와 동시성 그룹을 공유해 Pages 배포를 직렬화.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run build # dist/ 생성 + dist/404.html(SPA 폴백) + CNAME/robots/sitemap 복사
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
