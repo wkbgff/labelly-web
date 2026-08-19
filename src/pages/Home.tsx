@@ -12,7 +12,7 @@ import { DEMO, stats, storeUrls } from '../site-config';
 // 섹션 스타일 prop (원본 principlesDark, 기본 true → 원칙 섹션 다크 변형)
 const PRINCIPLES_DARK = true;
 
-const HERO_SCORE = 52;
+const HERO_SCORE = 48; // 신라면(신라면 큰사발) 종합건강관리 실제 점수 47.6 반올림 (persona_scores)
 const C = 201; // 히어로 점수 링 둘레
 const tier = (s: number) => (s >= 70 ? '좋은 편이에요' : s >= 40 ? '보통이에요' : '주의가 필요해요');
 const pillBg = (s: number) => (s >= 70 ? '#E8F6EE' : s >= 40 ? '#FBF3DD' : '#FBEAEA');
@@ -612,7 +612,7 @@ export default function Home() {
                     <div style={{ fontSize: 14, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>농심 신라면</div>
                     <div style={{ fontSize: 11, color: '#8A9097', marginTop: 1 }}>나트륨 함량이 높은 편이에요</div>
                   </div>
-                  <span style={{ background: '#FBEAEA', color: '#B3121C', fontSize: 13, fontWeight: 800, fontVariantNumeric: 'tabular-nums', padding: '5px 11px', borderRadius: 9999, flex: 'none' }}>24점</span>
+                  <span style={{ background: '#FBEAEA', color: '#B3121C', fontSize: 13, fontWeight: 800, fontVariantNumeric: 'tabular-nums', padding: '5px 11px', borderRadius: 9999, flex: 'none' }}>0점</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 0' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8A9097" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -624,10 +624,10 @@ export default function Home() {
                   <div style={{ fontSize: 10, fontWeight: 700, color: '#087E7A' }}>더 나은 대체상품</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>오뚜기 진라면 순한맛</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>농심 사리면</div>
                       <div style={{ fontSize: 11, color: '#087E7A', marginTop: 1 }}>나트륨이 더 낮아요</div>
                     </div>
-                    <span style={{ background: '#FBF3DD', color: '#8a6100', fontSize: 13, fontWeight: 800, fontVariantNumeric: 'tabular-nums', padding: '5px 11px', borderRadius: 9999, flex: 'none' }}>41점</span>
+                    <span style={{ background: '#FBF3DD', color: '#8a6100', fontSize: 13, fontWeight: 800, fontVariantNumeric: 'tabular-nums', padding: '5px 11px', borderRadius: 9999, flex: 'none' }}>50점</span>
                   </div>
                 </div>
                 <div style={{ fontSize: 11, color: '#8A9097', marginTop: 12 }}>같은 카테고리(라면) 안에서 추천해요</div>
@@ -665,7 +665,7 @@ export default function Home() {
                       <path d="M8.5 12h7" />
                       <path d="M8.5 16h4" />
                     </svg>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#646B73' }}>표시사항</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#646B73' }}>뒷면</span>
                   </div>
                 </div>
                 <div style={{ marginTop: 14, background: '#0BC2BC', borderRadius: 9999, padding: 12, textAlign: 'center', color: '#FFFFFF', fontSize: 13, fontWeight: 500 }}>사진으로 제보하기</div>
@@ -981,7 +981,7 @@ function HeroPhone(p: HeroPhoneProps) {
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 11, color: '#8A9097', whiteSpace: 'nowrap' }}>종합건강관리 기준</div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: p.ringColor, marginTop: 3, transition: 'color 300ms ease' }}>{p.heroTier}</div>
-                <div style={{ fontSize: 11, color: '#646B73', marginTop: 5 }}>라면 중 상위 41%</div>
+                <div style={{ fontSize: 11, color: '#646B73', marginTop: 5 }}>라면 중 상위 53%</div>
               </div>
             </div>
 
@@ -1002,18 +1002,21 @@ function HeroPhone(p: HeroPhoneProps) {
               </div>
             </div>
 
-            <div style={{ marginTop: 12, display: 'flex', gap: 6 }}>
+            <div style={{ marginTop: 11, marginBottom: 3, display: 'flex', justifyContent: 'flex-end' }}>
+              <span style={{ fontSize: 9, color: '#B4BAC0' }}>100g당</span>
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
               <div style={{ flex: 1, background: '#F7F8F9', borderRadius: 10, padding: '9px 6px', textAlign: 'center' }}>
                 <div style={{ fontSize: 10, color: '#8A9097' }}>나트륨</div>
-                <div style={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>1,790mg</div>
+                <div style={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>1,360mg</div>
               </div>
               <div style={{ flex: 1, background: '#F7F8F9', borderRadius: 10, padding: '9px 6px', textAlign: 'center' }}>
                 <div style={{ fontSize: 10, color: '#8A9097' }}>당류</div>
-                <div style={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>4g</div>
+                <div style={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>5g</div>
               </div>
               <div style={{ flex: 1, background: '#F7F8F9', borderRadius: 10, padding: '9px 6px', textAlign: 'center' }}>
                 <div style={{ fontSize: 10, color: '#8A9097' }}>단백질</div>
-                <div style={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>11g</div>
+                <div style={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>8g</div>
               </div>
             </div>
 
@@ -1022,10 +1025,10 @@ function HeroPhone(p: HeroPhoneProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 7 }}>
                 <div style={{ width: 34, height: 34, borderRadius: 9, background: 'rgba(11,194,188,0.14)', flex: 'none' }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>오뚜기 진라면 순한맛</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>농심 사리면</div>
                   <div style={{ fontSize: 11, color: '#087E7A', marginTop: 2, whiteSpace: 'nowrap' }}>나트륨이 더 낮아요</div>
                 </div>
-                <span style={{ background: '#FBF3DD', color: '#8a6100', fontSize: 12, fontWeight: 800, fontVariantNumeric: 'tabular-nums', padding: '4px 10px', borderRadius: 9999, flex: 'none' }}>41점</span>
+                <span style={{ background: '#FBF3DD', color: '#8a6100', fontSize: 12, fontWeight: 800, fontVariantNumeric: 'tabular-nums', padding: '4px 10px', borderRadius: 9999, flex: 'none' }}>57점</span>
               </div>
             </div>
           </div>
