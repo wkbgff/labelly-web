@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * 전역 스타일 — 라벨리 웹 시안(각 페이지 <helmet><style>)에서 그대로 이관.
+ * Tailwind preflight는 tailwind.config.js에서 비활성화되어 있어 아래 시안 스타일이 보존됩니다.
+ */
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #111417;
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+a {
+  color: #111417;
+  text-decoration: none;
+}
+a:hover {
+  color: #087e7a;
+}
+[data-hide-scrollbar] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+[data-hide-scrollbar]::-webkit-scrollbar {
+  display: none;
+}
+::selection {
+  background: rgba(11, 194, 188, 0.22);
+}
+
+/* 홈 히어로/카드 바코드 스캔 애니메이션 */
+@keyframes lbHeroScan {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(268px);
+    opacity: 0;
+  }
+}
+@keyframes lbCardScan {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(104px);
+  }
+}
+
+/* 소개 페이지 페르소나 호버 스포트라이트 */
+@media (hover: hover) {
+  [data-persona-card]:hover {
+    box-shadow: 0 8px 24px rgba(17, 20, 23, 0.09);
+  }
+  [data-persona-card]:hover [data-persona-chip] {
+    background: #0bc2bc;
+    color: #ffffff;
+  }
+  [data-persona-card]:hover [data-persona-desc] {
+    color: #111417;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-persona-list]:hover [data-persona-card]:not(:hover) {
+    opacity: 0.45;
+  }
+}
+
+/* 모션 최소화 선호 시 모든 애니메이션/트랜지션 제거 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
