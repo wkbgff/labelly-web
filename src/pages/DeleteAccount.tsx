@@ -204,7 +204,7 @@ export default function DeleteAccount() {
           <div style={{ background: '#F7F8F9', borderRadius: 16, padding: 24 }}>
             <div style={{ fontSize: 16, fontWeight: 700 }}>삭제되는 정보</div>
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {['계정 정보', '스캔 기록과 즐겨찾기', '페르소나·알레르기 설정', '상품 제보 이력'].map((item) => (
+              {['계정 정보', '스캔 기록과 즐겨찾기', '페르소나·알레르기 설정', '자가등록 시 업로드한 상품 사진'].map((item) => (
                 <div key={item} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B3121C" strokeWidth="2.4" strokeLinecap="round" style={{ flex: 'none', marginTop: 3 }} aria-hidden="true">
                     <line x1="6" y1="6" x2="18" y2="18" />
@@ -218,7 +218,7 @@ export default function DeleteAccount() {
           <div style={{ border: '1px solid #E8EAED', borderRadius: 16, padding: 24 }}>
             <div style={{ fontSize: 16, fontWeight: 700 }}>유지될 수 있는 정보</div>
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ fontSize: 14, color: '#646B73', lineHeight: 1.65 }}>승인되어 공개 데이터베이스에 반영된 상품 정보는 제보자를 알 수 없는 형태로 유지될 수 있습니다.</div>
+              <div style={{ fontSize: 14, color: '#646B73', lineHeight: 1.65 }}>회원님이 자가등록(제보)하신 상품 정보와 제보 이력은 삭제되지 않고, 제보자를 알 수 없도록 익명 처리된 뒤 서비스 운영을 위해 유지될 수 있습니다. (업로드하신 원본 사진은 위와 같이 삭제됩니다.)</div>
               <div style={{ fontSize: 14, color: '#646B73', lineHeight: 1.65 }}>법령에 따라 보존 의무가 있는 정보는 해당 법령이 정한 기간 동안 보관됩니다.</div>
             </div>
             <div style={{ marginTop: 14, fontSize: 13, color: '#8A9097', lineHeight: 1.6 }}>
