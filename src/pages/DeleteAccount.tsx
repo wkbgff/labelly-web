@@ -204,7 +204,7 @@ export default function DeleteAccount() {
           <div style={{ background: '#F7F8F9', borderRadius: 16, padding: 24 }}>
             <div style={{ fontSize: 16, fontWeight: 700 }}>삭제되는 정보</div>
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {['계정 정보', '스캔 기록과 즐겨찾기', '페르소나·알레르기 설정', '자가등록 시 업로드한 상품 사진'].map((item) => (
+              {['계정 정보', '스캔 기록과 즐겨찾기', '알레르기 설정', '자가등록 시 업로드한 상품 사진'].map((item) => (
                 <div key={item} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B3121C" strokeWidth="2.4" strokeLinecap="round" style={{ flex: 'none', marginTop: 3 }} aria-hidden="true">
                     <line x1="6" y1="6" x2="18" y2="18" />
@@ -213,6 +213,9 @@ export default function DeleteAccount() {
                   <span style={{ fontSize: 14, color: '#111417', lineHeight: 1.55 }}>{item}</span>
                 </div>
               ))}
+            </div>
+            <div style={{ marginTop: 14, fontSize: 13, color: '#8A9097', lineHeight: 1.6 }}>
+              ※ 선택하신 페르소나(건강목표)는 서버에 저장되지 않고 기기에만 보관되므로, 앱 삭제 또는 기기 데이터 삭제 시 함께 제거됩니다.
             </div>
           </div>
           <div style={{ border: '1px solid #E8EAED', borderRadius: 16, padding: 24 }}>
